@@ -23,10 +23,12 @@ my $update;
 
 # Command line arguments for web server
 my $www;
+my $disallow;
 
 # TODO Display -usage if command line argument(s) are incorrect
 GetOptions(
     "www=s"   => \$www,
+    "disallow" => \$disallow,
 
     # Command line meta-options 
     # version is excluded as it is printed prior to processing the command line arguments
@@ -93,7 +95,9 @@ LW2::http_init_request( \%request );
 $request{'whisker'}->{'host'} = "$www";
 $request{'whisker'}->{'proxy_host'} = "127.0.0.1";
 $request{'whisker'}->{'proxy_port'} = "8080";
+
 print "3. Sending Allow: URIs of $www to web proxy i.e. 127.0.0.1:8080\n";
+# TODO refactor as sub()
 foreach my $uri (@Allow) {
 	my @uri = split (/Allow: /, $uri);
 	$request{'whisker'}->{'uri'} = "$uri[1]";
@@ -105,6 +109,23 @@ foreach my $uri (@Allow) {
     	print $response{'whisker'}->{'data'}, "\n";
 	}
 	print "\t $uri[1] sent\n";
+}
+
+if ($disallow != "0") {
+	# TODO refactor as sub()
+	print "3. Sending Disallow: URIs of $www to web proxy i.e. 127.0.0.1:8080\n";
+	foreach my $uri (@Disallow) {
+		my @uri = split (/Disallow: /, $uri);
+		$request{'whisker'}->{'uri'} = "$uri[1]";
+		LW2::http_fixup_request( \%request );
+		my %response;
+		if ( LW2::http_do_request( \%request, \%response ) ) {
+    		##error handling
+    		print 'ERROR: ', $response{'whisker'}->{'error'}, "\n";
+    		print $response{'whisker'}->{'data'}, "\n";
+		}
+		print "\t $uri[1] sent\n";
+	}
 }
 
 print "4. Done\n";
@@ -129,13 +150,15 @@ speculum.pl -www [Fully Qualified Domain Name (FQDN)]
  				
 =head1 OPTIONAL ARGUEMENTS
 
+-disallow      Make HTTP Request based on Disallow: directive(s)
+
 -man           Displays POD and exits.
 -usage         Displays POD and exits.
 -update        Displays the git command to retrieve the latest update from @GitHub
 
 =head1 DESCRIPTION
 
-Makes HTTP Requests via an (intercepting) proxy based on the Allow: directives of webroot/robots.txt  
+Makes HTTP Requests via an (intercepting) proxy based on the directives of webroot/robots.txt  
 
 =head1 DEPENDENCIES
 
