@@ -1,0 +1,3 @@
+=head1 README
+
+Please refer to the https://github.com/cmlh/Speculum/wiki for further information.
