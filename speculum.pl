@@ -30,9 +30,9 @@ GetOptions(
     "www=s"    => \$www,
     "disallow" => \$disallow,
 
-# Command line meta-options
-# version is excluded as it is printed prior to processing the command line arguments
-# verbose is excluded as output is less then 25 lines
+	# Command line meta-options
+	# version is excluded as it is printed prior to processing the command line arguments
+	# verbose is excluded as output is less then 25 lines
     "usage"  => \$usage,
     "man"    => \$man,
     "update" => \$update
