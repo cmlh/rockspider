@@ -9,7 +9,7 @@ use Pod::Usage;
 use Getopt::Long;
 use LW2; # http://sourceforge.net/projects/whisker/ v2.2.5
 
-my $VERSION = "0.0_1"; # May be required to upload script to CPAN i.e. http://www.cpan.org/scripts/submitting.html
+my $VERSION = "0.0_2"; # May be required to upload script to CPAN i.e. http://www.cpan.org/scripts/submitting.html
 
 print "\n\"Speculum\" Alpha v$VERSION\n";
 print "\n";
@@ -51,7 +51,8 @@ if ($update eq 1) {
 my $response_code;
 my $html_data;
 
-print "1. Downloading http://$www/robots.txt\n";
+# TODO Replace "stage" numbering i.e. Line #54 of https://github.com/cmlh/Speculum/commit/182a07a969d8e669fb4db4ad4633c519e9e3221d#L52
+print "Downloading http://$www/robots.txt\n";
 
 ($response_code, $html_data) = LW2::get_page( "http://$www/robots.txt" );
 
@@ -88,7 +89,7 @@ my $robots_dot_txt_file ="$www-robots.txt";
 
 $response_code = LW2::get_page_to_file( "http://$www/robots.txt", $robots_dot_txt_file );
 
-print "2. robots.txt saved as $robots_dot_txt_file\n";
+print "\"robots.txt\" saved as $robots_dot_txt_file\n";
 
 my %request;
 LW2::http_init_request( \%request );
@@ -96,7 +97,7 @@ $request{'whisker'}->{'host'} = "$www";
 $request{'whisker'}->{'proxy_host'} = "127.0.0.1";
 $request{'whisker'}->{'proxy_port'} = "8080";
 
-print "3. Sending Allow: URIs of $www to web proxy i.e. 127.0.0.1:8080\n";
+print "Sending Allow: URIs of $www to web proxy i.e. 127.0.0.1:8080\n";
 # TODO refactor as sub()
 foreach my $uri (@Allow) {
 	my @uri = split (/Allow: /, $uri);
@@ -128,7 +129,7 @@ if ($disallow != "0") {
 	}
 }
 
-print "4. Done\n";
+print "Done\n";
 
 =head1 NAME
 
