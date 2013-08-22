@@ -7,7 +7,7 @@ use strict;
 use Carp;
 use Pod::Usage;
 use Getopt::Long;
-use LW2; # http://sourceforge.net/projects/whisker/ v2.2.5
+use LW2;    # http://sourceforge.net/projects/whisker/ v2.2.5
 
 my $VERSION = "0.0_2"; # May be required to upload script to CPAN i.e. http://www.cpan.org/scripts/submitting.html
 
@@ -18,7 +18,7 @@ print "Licensed under the Apache License, Version 2.0\n\n";
 
 # Command line meta-options
 my $usage;
-my $man; 
+my $man;
 my $update;
 
 # Command line arguments for web server
@@ -27,23 +27,23 @@ my $disallow;
 
 # TODO Display -usage if command line argument(s) are incorrect
 GetOptions(
-    "www=s"   => \$www,
+    "www=s"    => \$www,
     "disallow" => \$disallow,
 
-    # Command line meta-options 
-    # version is excluded as it is printed prior to processing the command line arguments
-    # verbose is excluded as output is less then 25 lines
-    "usage"   => \$usage,
-    "man"     => \$man,  
-    "update"  => \$update
+# Command line meta-options
+# version is excluded as it is printed prior to processing the command line arguments
+# verbose is excluded as output is less then 25 lines
+    "usage"  => \$usage,
+    "man"    => \$man,
+    "update" => \$update
 );
 
-if (($usage eq 1) or ($man eq 1)) {
-    pod2usage(-verbose => 2);
+if ( ( $usage eq 1 ) or ( $man eq 1 ) ) {
+    pod2usage( -verbose => 2 );
     die();
 }
 
-if ($update eq 1) {
+if ( $update eq 1 ) {
     print "Please execute \"git pull\" from the command line\n";
     die();
 }
@@ -54,12 +54,12 @@ my $html_data;
 # TODO Replace "stage" numbering i.e. Line #54 of https://github.com/cmlh/Speculum/commit/182a07a969d8e669fb4db4ad4633c519e9e3221d#L52
 print "Downloading http://$www/robots.txt\n";
 
-($response_code, $html_data) = LW2::get_page( "http://$www/robots.txt" );
+( $response_code, $html_data ) = LW2::get_page("http://$www/robots.txt");
 
-if($response_code != 200){
-	print "There was an error\n";
-	print "$www HTTP Status Code: $response_code\n";
-	exit;
+if ( $response_code != 200 ) {
+    print "There was an error\n";
+    print "$www HTTP Status Code: $response_code\n";
+    exit;
 }
 
 my @Allow;
@@ -67,63 +67,63 @@ my @Disallow;
 my @Sitemap;
 my @Useragent;
 
-foreach my $line (split /\n/, $html_data) {
-	if ($line =~ "Allow:") {
-		push (@Allow, $line);
-	}
-	if ($line =~ "Disallow:") {
-		push (@Disallow, $line);
-	}
-	if ($line =~ "Sitemap:") {
-		push (@Sitemap, $line);
-	}
-	
-	if ($line =~ "User-agent:") {
-		push (@Useragent, $line);
-	}
-	
-	# TODO Raise exception if $line is not Allow:, Disallow:, Sitemap or User_agent:
+foreach my $line ( split /\n/, $html_data ) {
+    if ( $line =~ "Allow:" ) {
+        push( @Allow, $line );
+    }
+    if ( $line =~ "Disallow:" ) {
+        push( @Disallow, $line );
+    }
+    if ( $line =~ "Sitemap:" ) {
+        push( @Sitemap, $line );
+    }
+
+    if ( $line =~ "User-agent:" ) {
+        push( @Useragent, $line );
+    }
+
+# TODO Raise exception if $line is not Allow:, Disallow:, Sitemap or User_agent:
 }
 
-my $robots_dot_txt_file ="$www-robots.txt";
+my $robots_dot_txt_file = "$www-robots.txt";
 
-$response_code = LW2::get_page_to_file( "http://$www/robots.txt", $robots_dot_txt_file );
+$response_code =
+  LW2::get_page_to_file( "http://$www/robots.txt", $robots_dot_txt_file );
 
 print "\"robots.txt\" saved as $robots_dot_txt_file\n";
 
-proxy_requests("Allow:", \@Allow, $www);
+proxy_requests( "Allow:", \@Allow, $www );
 
-if ($disallow != "0") {
-	proxy_requests("Disallow:", \@Disallow, $www);
+if ( $disallow != "0" ) {
+    proxy_requests( "Disallow:", \@Disallow, $www );
 }
 
 print "Done\n";
 
-
 sub proxy_requests {
-	my %_request;
-	LW2::http_init_request( \%_request );
-	$_request{'whisker'}->{'host'} = "$www";
-	$_request{'whisker'}->{'proxy_host'} = "127.0.0.1";
-	$_request{'whisker'}->{'proxy_port'} = "8080";
-	my $_www = $_[2];
-	print "Sending $_[0] URIs of $_www to web proxy i.e. 127.0.0.1:8080\n";
-	# TODO refactor as sub()
-	my @_uris = @{$_[1]};
-	foreach my $_uri (@_uris) {
-		my @_uri = split (/ /, $_uri);
-		$_request{'whisker'}->{'uri'} = "$_uri[1]";
-		LW2::http_fixup_request( \%_request );
-		my %_response;
-		if ( LW2::http_do_request( \%_request, \%_response ) ) {
-    	##error handling
-    		print 'ERROR: ', $_response{'whisker'}->{'error'}, "\n";
-    		print $_response{'whisker'}->{'data'}, "\n";
-		}
-		print "\t $_uri[1] sent\n";
-	}
-}
+    my %_request;
+    LW2::http_init_request( \%_request );
+    $_request{'whisker'}->{'host'}       = "$www";
+    $_request{'whisker'}->{'proxy_host'} = "127.0.0.1";
+    $_request{'whisker'}->{'proxy_port'} = "8080";
+    my $_www = $_[2];
+    print "Sending $_[0] URIs of $_www to web proxy i.e. 127.0.0.1:8080\n";
 
+    # TODO refactor as sub()
+    my @_uris = @{ $_[1] };
+    foreach my $_uri (@_uris) {
+        my @_uri = split( / /, $_uri );
+        $_request{'whisker'}->{'uri'} = "$_uri[1]";
+        LW2::http_fixup_request( \%_request );
+        my %_response;
+        if ( LW2::http_do_request( \%_request, \%_response ) ) {
+            ##error handling
+            print 'ERROR: ', $_response{'whisker'}->{'error'}, "\n";
+            print $_response{'whisker'}->{'data'}, "\n";
+        }
+        print "\t $_uri[1] sent\n";
+    }
+}
 
 =head1 NAME
 
