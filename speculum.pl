@@ -91,45 +91,39 @@ $response_code = LW2::get_page_to_file( "http://$www/robots.txt", $robots_dot_tx
 
 print "\"robots.txt\" saved as $robots_dot_txt_file\n";
 
-my %request;
-LW2::http_init_request( \%request );
-$request{'whisker'}->{'host'} = "$www";
-$request{'whisker'}->{'proxy_host'} = "127.0.0.1";
-$request{'whisker'}->{'proxy_port'} = "8080";
-
-print "Sending Allow: URIs of $www to web proxy i.e. 127.0.0.1:8080\n";
-# TODO refactor as sub()
-foreach my $uri (@Allow) {
-	my @uri = split (/Allow: /, $uri);
-	$request{'whisker'}->{'uri'} = "$uri[1]";
-	LW2::http_fixup_request( \%request );
-	my %response;
-	if ( LW2::http_do_request( \%request, \%response ) ) {
-    ##error handling
-    	print 'ERROR: ', $response{'whisker'}->{'error'}, "\n";
-    	print $response{'whisker'}->{'data'}, "\n";
-	}
-	print "\t $uri[1] sent\n";
-}
+proxy_requests("Allow:", \@Allow, $www);
 
 if ($disallow != "0") {
-	# TODO refactor as sub()
-	print "3. Sending Disallow: URIs of $www to web proxy i.e. 127.0.0.1:8080\n";
-	foreach my $uri (@Disallow) {
-		my @uri = split (/Disallow: /, $uri);
-		$request{'whisker'}->{'uri'} = "$uri[1]";
-		LW2::http_fixup_request( \%request );
-		my %response;
-		if ( LW2::http_do_request( \%request, \%response ) ) {
-    		##error handling
-    		print 'ERROR: ', $response{'whisker'}->{'error'}, "\n";
-    		print $response{'whisker'}->{'data'}, "\n";
-		}
-		print "\t $uri[1] sent\n";
-	}
+	proxy_requests("Disallow:", \@Disallow, $www);
 }
 
 print "Done\n";
+
+
+sub proxy_requests {
+	my %_request;
+	LW2::http_init_request( \%_request );
+	$_request{'whisker'}->{'host'} = "$www";
+	$_request{'whisker'}->{'proxy_host'} = "127.0.0.1";
+	$_request{'whisker'}->{'proxy_port'} = "8080";
+	my $_www = $_[2];
+	print "Sending $_[0] URIs of $_www to web proxy i.e. 127.0.0.1:8080\n";
+	# TODO refactor as sub()
+	my @_uris = @{$_[1]};
+	foreach my $_uri (@_uris) {
+		my @_uri = split (/ /, $_uri);
+		$_request{'whisker'}->{'uri'} = "$_uri[1]";
+		LW2::http_fixup_request( \%_request );
+		my %_response;
+		if ( LW2::http_do_request( \%_request, \%_response ) ) {
+    	##error handling
+    		print 'ERROR: ', $_response{'whisker'}->{'error'}, "\n";
+    		print $_response{'whisker'}->{'data'}, "\n";
+		}
+		print "\t $_uri[1] sent\n";
+	}
+}
+
 
 =head1 NAME
 
