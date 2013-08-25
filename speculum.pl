@@ -104,10 +104,13 @@ sub proxy_requests {
     my %_request;
     LW2::http_init_request( \%_request );
     my $_www = $_[2];
-    $_request{'whisker'}->{'host'}       = "_$www";
+    $_request{'whisker'}->{'host'}       = "$_www";
     $_request{'whisker'}->{'proxy_host'} = "127.0.0.1";
     $_request{'whisker'}->{'proxy_port'} = "8080";
-        print "Sending $_[0] URIs of $_www to web proxy i.e. 127.0.0.1:8080\n";
+    # https://support.google.com/webmasters/answer/1061943
+    $_request{'User-Agent'} = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+    # $_request{'whisker'}->{'User-Agent'} = "Googlebot/2.1 (+http://www.google.com/bot.html)";
+	print "Sending $_[0] URIs of $_www to web proxy i.e. 127.0.0.1:8080\n";
 
     # TODO refactor as sub()
     my @_uris = @{ $_[1] };
