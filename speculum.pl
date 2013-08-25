@@ -103,11 +103,11 @@ print "Done\n";
 sub proxy_requests {
     my %_request;
     LW2::http_init_request( \%_request );
-    $_request{'whisker'}->{'host'}       = "$www";
+    my $_www = $_[2];
+    $_request{'whisker'}->{'host'}       = "_$www";
     $_request{'whisker'}->{'proxy_host'} = "127.0.0.1";
     $_request{'whisker'}->{'proxy_port'} = "8080";
-    my $_www = $_[2];
-    print "Sending $_[0] URIs of $_www to web proxy i.e. 127.0.0.1:8080\n";
+        print "Sending $_[0] URIs of $_www to web proxy i.e. 127.0.0.1:8080\n";
 
     # TODO refactor as sub()
     my @_uris = @{ $_[1] };
