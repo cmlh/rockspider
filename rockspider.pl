@@ -110,7 +110,9 @@ sub proxy_requests {
     # https://support.google.com/webmasters/answer/1061943
     $_request{'User-Agent'} = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
     # $_request{'whisker'}->{'User-Agent'} = "Googlebot/2.1 (+http://www.google.com/bot.html)";
-	print "Sending $_[0] URIs of $_www to web proxy i.e. 127.0.0.1:8080\n";
+    
+    # TODO Insert User Agent i.e. GoogleBot, BingBot, etc
+	print "Sending \"$_[0]\" URIs of $_www to proxy i.e. 127.0.0.1:8080\n";
 
     # TODO refactor as sub()
     my @_uris = @{ $_[1] };
@@ -124,6 +126,7 @@ sub proxy_requests {
             print 'ERROR: ', $_response{'whisker'}->{'error'}, "\n";
             print $_response{'whisker'}->{'data'}, "\n";
         }
+        # TODO Insert HTTP Status Code
         print "\t $_uri[1] sent\n";
     }
 }
