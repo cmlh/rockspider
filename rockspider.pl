@@ -117,7 +117,7 @@ sub proxy_requests {
     $_request{'User-Agent'} = $user_agent;
     
     # TODO Insert User Agent i.e. GoogleBot, BingBot, etc
-	print "Sending \"$_[0]\" URIs of $_www to proxy i.e. 127.0.0.1:8080\n";
+	print "Sending \"$_[0]\" URIs of $_www to proxy, i.e. 127.0.0.1:8080, as User-Agent \"$user_agent\"\n";
 
     # TODO refactor as sub()
     my @_uris = @{ $_[1] };
