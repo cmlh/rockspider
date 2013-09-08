@@ -11,7 +11,7 @@ use LW2;    # http://sourceforge.net/projects/whisker/ v2.2.5
 
 my $VERSION = "0.0_2"; # May be required to upload script to CPAN i.e. http://www.cpan.org/scripts/submitting.html
 
-print "\n\"Speculum\" Alpha v$VERSION\n";
+print "\n\"Rock Spider\" Alpha v$VERSION\n";
 print "\n";
 print "Copyright 2013 Christian Heinrich\n";
 print "Licensed under the Apache License, Version 2.0\n\n";
