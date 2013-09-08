@@ -104,12 +104,17 @@ sub proxy_requests {
     my %_request;
     LW2::http_init_request( \%_request );
     my $_www = $_[2];
+    # http://www.bing.com/blogs/site_blogs/b/webmaster/archive/2010/09/03/bingbot-is-coming-to-town.aspx
+    # http://www.bing.com/blogs/site_blogs/b/webmaster/archive/2010/06/28/bing-crawler-bingbot-on-the-horizon.aspx
+    # TODO From: HTTP Header
+    my $bingbot = "Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)";
+    # https://support.google.com/webmasters/answer/1061943	
+    my $googlebot = "Googlebot/2.1 (+http://www.google.com/bot.html)";
+    my $user_agent = $googlebot;
     $_request{'whisker'}->{'host'}       = "$_www";
     $_request{'whisker'}->{'proxy_host'} = "127.0.0.1";
     $_request{'whisker'}->{'proxy_port'} = "8080";
-    # https://support.google.com/webmasters/answer/1061943
-    $_request{'User-Agent'} = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
-    # $_request{'whisker'}->{'User-Agent'} = "Googlebot/2.1 (+http://www.google.com/bot.html)";
+    $_request{'User-Agent'} = $user_agent;
     
     # TODO Insert User Agent i.e. GoogleBot, BingBot, etc
 	print "Sending \"$_[0]\" URIs of $_www to proxy i.e. 127.0.0.1:8080\n";
